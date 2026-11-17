@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 from functools import wraps
 
-from flask import Flask, render_template, redirect, url_for, flash, request, abort
+from flask import Flask, render_template, redirect, url_for, flash, request, abort, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -221,6 +221,15 @@ def dashboard():
         return render_template("dashboard_employer.html", jobs=jobs)
     applications = Application.query.filter_by(candidate_id=current_user.id).order_by(Application.created_at.desc()).all()
     return render_template("dashboard_candidate.html", applications=applications)
+
+
+@app.get("/applications/<int:application_id>/cv")
+@role_required("employer")
+def download_cv(application_id):
+    application = Application.query.get_or_404(application_id)
+    if application.job.employer_id != current_user.id:
+        abort(403)
+    return send_from_directory(UPLOAD_DIR, application.cv_filename, as_attachment=True)
 
 
 @app.post("/applications/<int:application_id>/status")
