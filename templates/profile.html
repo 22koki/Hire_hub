@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Company profile' if current_user.role == 'employer' else 'Candidate profile' }} — Hire Hub{% endblock %}
+{% block content %}
+<section class="container profile-page">
+  <a class="back-link" href="{{ url_for('dashboard') }}">← Back to dashboard</a>
+  <div class="profile-heading">
+    <div><div class="eyebrow">{{ 'EMPLOYER WORKSPACE' if current_user.role == 'employer' else 'CAREER PROFILE' }}</div>
+    <h1>{{ 'Build your company presence.' if current_user.role == 'employer' else 'Tell your professional story.' }}</h1>
+    <p class="muted">{{ 'Help candidates understand your organisation and the opportunities you offer.' if current_user.role == 'employer' else 'Keep your professional information organised and ready for your next opportunity.' }}</p></div>
+    <div class="profile-avatar">{{ (profile.company_name if current_user.role == 'employer' and profile.company_name else current_user.name)[:1]|upper }}</div>
+  </div>
+  <form method="post" class="panel profile-form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if current_user.role == 'employer' %}
+      <h2>Company information</h2>
+      <div class="form-grid">
+        <label>Company name<input name="company_name" maxlength="160" value="{{ profile.company_name or '' }}" placeholder="e.g. Acme Technologies"></label>
+        <label>Industry<input name="industry" maxlength="120" value="{{ profile.industry or '' }}" placeholder="e.g. Technology"></label>
+        <label>Company size<select name="company_size"><option value="">Select company size</option>{% for size in ['1–10 employees','11–50 employees','51–200 employees','201–500 employees','501–1,000 employees','1,000+ employees'] %}<option value="{{ size }}" {% if profile.company_size == size %}selected{% endif %}>{{ size }}</option>{% endfor %}</select></label>
+        <label>Company location<input name="location" maxlength="120" value="{{ profile.location or '' }}" placeholder="City, country"></label>
+        <label class="full-span">Company website<input type="url" name="website" maxlength="255" value="{{ profile.website or '' }}" placeholder="https://example.com"></label>
+        <label class="full-span">Company overview<textarea name="bio" rows="6" placeholder="Introduce your organisation, mission and culture...">{{ profile.bio or '' }}</textarea></label>
+      </div>
+    {% else %}
+      <h2>Professional information</h2>
+      <div class="form-grid">
+        <label class="full-span">Professional headline<input name="headline" maxlength="160" value="{{ profile.headline or '' }}" placeholder="e.g. Junior Software Developer | Python & Flask"></label>
+        <label>Location<input name="location" maxlength="120" value="{{ profile.location or '' }}" placeholder="City, country"></label>
+        <label>Phone number<input type="tel" name="phone" maxlength="40" value="{{ profile.phone or '' }}" placeholder="+254..."></label>
+        <label class="full-span">Portfolio or LinkedIn website<input type="url" name="website" maxlength="255" value="{{ profile.website or '' }}" placeholder="https://..."></label>
+        <label class="full-span">Professional summary<textarea name="bio" rows="5" placeholder="Tell employers about your background and career goals...">{{ profile.bio or '' }}</textarea></label>
+        <label class="full-span">Skills<textarea name="skills" rows="4" placeholder="Python, Flask, SQL, communication...">{{ profile.skills or '' }}</textarea><small>Separate skills with commas.</small></label>
+        <label class="full-span">Education<textarea name="education" rows="4" placeholder="Qualification, institution and year...">{{ profile.education or '' }}</textarea></label>
+        <label class="full-span">Work experience<textarea name="experience" rows="5" placeholder="Role, organisation, dates and achievements...">{{ profile.experience or '' }}</textarea></label>
+      </div>
+    {% endif %}
+    <div class="profile-form-actions"><a class="text-link" href="{{ url_for('dashboard') }}">Cancel</a><button class="btn" type="submit">Save profile</button></div>
+  </form>
+</section>
+{% endblock %}
