@@ -60,6 +60,24 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 
+class Profile(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), unique=True, nullable=False)
+    headline = db.Column(db.String(160))
+    location = db.Column(db.String(120))
+    phone = db.Column(db.String(40))
+    website = db.Column(db.String(255))
+    bio = db.Column(db.Text)
+    skills = db.Column(db.Text)
+    education = db.Column(db.Text)
+    experience = db.Column(db.Text)
+    company_name = db.Column(db.String(160))
+    industry = db.Column(db.String(120))
+    company_size = db.Column(db.String(60))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
 class Job(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(160), nullable=False)
@@ -278,6 +296,34 @@ def apply(job_id):
 
     flash("Application submitted successfully. You can track it from your dashboard.", "success")
     return redirect(url_for("dashboard"))
+
+
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    user_profile = Profile.query.filter_by(user_id=current_user.id).first()
+    if user_profile is None:
+        user_profile = Profile(user_id=current_user.id)
+        db.session.add(user_profile)
+        db.session.commit()
+
+    if request.method == "POST":
+        fields = ("headline", "location", "phone", "website", "bio", "skills",
+                  "education", "experience", "company_name", "industry", "company_size")
+        limits = {"headline": 160, "location": 120, "phone": 40, "website": 255,
+                  "company_name": 160, "industry": 120, "company_size": 60}
+        values = {field: request.form.get(field, "").strip() for field in fields}
+        if any(len(values[field]) > limit for field, limit in limits.items()):
+            flash("One or more fields exceed the allowed length.", "error")
+        elif values["website"] and not values["website"].startswith(("https://", "http://")):
+            flash("Please enter a website beginning with http:// or https://.", "error")
+        else:
+            for field, value in values.items():
+                setattr(user_profile, field, value or None)
+            db.session.commit()
+            flash("Your profile has been saved.", "success")
+            return redirect(url_for("profile"))
+    return render_template("profile.html", profile=user_profile)
 
 
 @app.route("/dashboard")
