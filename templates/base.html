@@ -15,7 +15,7 @@
   <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">H</span> hire<span>hub</span></a>
   <div class="nav-links"><a href="{{ url_for('index') }}">Find jobs</a>
   {% if current_user.is_authenticated %}
-    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('dashboard') }}">Dashboard</a><a href="{{ url_for('profile') }}">My profile</a>
     {% if current_user.role == 'employer' %}<a class="btn btn-small" href="{{ url_for('post_job') }}">Post a job</a>{% endif %}
     <form action="{{ url_for('logout') }}" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="nav-logout" type="submit">Log out</button></form>
   {% else %}<a href="{{ url_for('login') }}">Log in</a><a class="btn btn-small" href="{{ url_for('register') }}">Get started</a>{% endif %}
