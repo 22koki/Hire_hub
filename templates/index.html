@@ -1,7 +1,35 @@
 {% extends "base.html" %}{% block content %}
-<section class="hero"><div class="container hero-inner"><div class="eyebrow"><span></span> YOUR NEXT CHAPTER STARTS HERE</div><h1>Work that moves<br><em>you forward.</em></h1><p class="hero-copy">Discover opportunities where your skills matter, your ideas count, and your career can grow.</p>
-<form class="search-panel" method="get" action="{{ url_for('index') }}"><label><span>What are you looking for?</span><input name="q" value="{{ search }}" placeholder="Job title, company or skill"></label><label><span>Where?</span><input name="location" value="{{ location }}" placeholder="City or remote"></label><button class="btn" type="submit">Search jobs <span>→</span></button></form>
-<div class="hero-note">Thoughtful opportunities. Real career growth.</div></div></section>
+<section class="hero">
+  <div class="container hero-inner hero-layout">
+    <div class="hero-content">
+      <div class="eyebrow"><span></span> YOUR NEXT CHAPTER STARTS HERE</div>
+      <h1>Find work that<br><em>moves you forward.</em></h1>
+      <p class="hero-copy">Discover meaningful opportunities, connect with great teams, and take the next step in your career.</p>
+      <form class="search-panel" method="get" action="{{ url_for('index') }}">
+        <label><span>What are you looking for?</span><input name="q" value="{{ search }}" placeholder="Job title, company or skill"></label>
+        <label><span>Where?</span><input name="location" value="{{ location }}" placeholder="City or remote"></label>
+        <button class="btn" type="submit">Search jobs <span>→</span></button>
+      </form>
+      <div class="hero-note"><span class="note-check">✓</span> Explore roles. Apply with confidence. Track every step.</div>
+    </div>
+    <div class="hero-art" aria-label="Illustration of a job application dashboard">
+      <div class="art-orbit orbit-one"></div><div class="art-orbit orbit-two"></div>
+      <div class="floating-label label-top"><span class="label-dot"></span> Your next move starts here</div>
+      <div class="preview-window">
+        <div class="preview-top"><div class="preview-brand"><span>H</span> hirehub</div><div class="preview-dots"><i></i><i></i><i></i></div></div>
+        <div class="preview-body">
+          <div class="preview-greeting">YOUR CAREER, IN MOTION</div>
+          <h3>Opportunities<br>worth exploring.</h3>
+          <div class="preview-search"><span>⌕</span> Search roles and skills <b>→</b></div>
+          <div class="preview-job"><div class="preview-company">N</div><div class="preview-job-copy"><strong>Product Designer</strong><small>Northstar Studio · Nairobi</small></div><span class="preview-pill">Hybrid</span></div>
+          <div class="preview-job"><div class="preview-company company-purple">A</div><div class="preview-job-copy"><strong>Frontend Developer</strong><small>Atlas Digital · Remote</small></div><span class="preview-pill">Remote</span></div>
+        </div>
+      </div>
+      <div class="floating-label label-bottom"><span class="success-icon">✓</span><span><strong>Application tracked</strong><small>Every step, in one place</small></span></div>
+    </div>
+  </div>
+</section>
+<section class="trust-strip"><div class="container trust-inner"><span>BUILT FOR EVERY CAREER MOVE</span><div><b>Discover</b><i></i><b>Connect</b><i></i><b>Grow</b></div></div></section>
 <section class="section container"><div class="section-heading"><div><div class="eyebrow">CURATED FOR YOUR NEXT MOVE</div><h2>Explore opportunities</h2><p class="muted">Find a role that fits your ambitions.</p></div><span class="result-count">{{ jobs|length }} open roles</span></div>
 {% if jobs %}<div class="job-grid">{% for job in jobs %}<a class="job-card" href="{{ url_for('job_detail', job_id=job.id) }}"><div class="job-top"><span class="company-icon">{{ job.company[:1]|upper }}</span><span class="tag">{{ job.job_type }}</span></div><h3>{{ job.title }}</h3><p class="company-name">{{ job.company }}</p><div class="job-meta"><span>⌖ {{ job.location }}</span><span>{{ job.workplace }}</span></div><div class="job-bottom"><span>{{ job.salary or job.category }}</span><span class="arrow">↗</span></div></a>{% endfor %}</div>
 {% else %}<div class="empty-state"><div class="empty-icon">⌕</div><h3>No matching roles just yet</h3><p>Try another keyword or location, or check back soon as new opportunities arrive.</p><a class="btn btn-outline" href="{{ url_for('index') }}">Clear search</a></div>{% endif %}
